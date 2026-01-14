@@ -1,0 +1,15 @@
+## Notes 
+
+## TODO Main 
+- Double check the linear attention implementation 
+- Double check the new ConvolutionalAttention2D implementation 
+- Implement ConvolutionalAttention1D for GPT2 architecture 
+
+
+## Model Implementation 
+- Either keep original LayerNorm with permute or use BatchNorm with no permute needed
+- Can have different num_channels (d_hidden) for q, k, v -> optional implementation 
+- Fully Convolutional Vision Transformer (FCViT) keeps original shape of (Batch, Channels, Height, Width) until the end 
+    - No linear layers besides the classifier at the end of model (Can't we use 1x1 Conv1d for this??) # TODO No Linear Layer in FCViT
+
+
