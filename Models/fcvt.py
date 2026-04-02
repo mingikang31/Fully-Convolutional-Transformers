@@ -9,6 +9,7 @@ import numpy as np
 Fully Convolutional Vision Transformer (FCVT) Model Class
 """
 
+
 class PatchEmbedding2D(nn.Module):
     def __init__(self, d_hidden, img_size, patch_size, n_channels=3):
         super(PatchEmbedding2D, self).__init__()
@@ -139,7 +140,8 @@ class ConvolutionalAttention2D_Old(nn.Module):
         phi_k = self.phi(k)
         phi_v = self.phi(v) 
 
-        qv_matrix = torch.einsum('bchw,bdhw->bcd', phi_q, phi_v)  # (32, n_channel_q, n_channel_v)
+        # Einsum is very slow here, need to optimize later 
+        qv_matrix = torch.einsum('bchw,bdhw->bcd', phi_q, phi_v)  # (B, n_channel_q, n_channel_v)
 
         # for each batch index, insert for weight and convolve on phi_k
         attended_batch = []
@@ -186,7 +188,8 @@ class ConvolutionalAttention2D(nn.Module):
         phi_q = self.phi(q) 
         phi_k = self.phi(k)
         phi_v = self.phi(v) 
-
+        
+        # Einsum is very slow here, need to optimize later 
         # Comput Q^T @ V for each batch -> (B, C, C)
         qv_matrix = torch.einsum('bchw,bdhw->bcd', phi_q, phi_v)  # (B, n_channel_q, n_channel_v)
 
@@ -194,7 +197,7 @@ class ConvolutionalAttention2D(nn.Module):
         weight = qv_matrix.reshape(B * C, C, 1, 1)  # (B * n_channel_q, n_channel_v, 1, 1)
         k_grouped = phi_k.reshape(1, B * C, H, W)  # (1, B * n_channel_k, H, W )
 
-        out = F.conv2d(k_grouped, weight, groups=B)  # (1, B * n_channel_q, H, W)
+        out = F.conv2d(k_grouped, weight, groups=B)  # (1, B * n_channel_q, H, W) # TODO Use depthwise convolution
         out = out.reshape(B, C, H, W)  # (B, n_channel_q, H, W)
 
         out = self.W_o(out) 
@@ -276,9 +279,11 @@ class FCVT(nn.Module):
         # (Batch, d_hidden, height, width) as input for classifier
         self.classifier = nn.Sequential(
             nn.AdaptiveAvgPool2d((1, 1)), 
-            nn.Flatten(), 
-            nn.Linear(d_hidden, n_classes)
+            nn.Conv2d(d_hidden, n_classes, kernel_size=1, stride=1), 
+            nn.Flatten()
         )
+
+        self.name = f"ViT_{self.n_layers}L_{self.n_heads}H_{self.d_hidden}D"
         
     def forward(self, x):
         x = self.patch_embedding(x) 

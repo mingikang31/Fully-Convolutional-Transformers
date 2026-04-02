@@ -58,7 +58,7 @@ class LinearAttention(nn.Module):
         
         # Compute output: q @ (k^T @ v) / (q @ k^T @ 1)
         numerator = torch.einsum('bhnd,bhdm->bhnm', q, kv)  # (B, H, N, D)
-        denominator = torch.einsum('bhnd,bhmd->bhn', q, k_sum).unsqueeze(-1)  # (B, H, N, 1)
+        denominator = torch.einsum('bhnd,bvhmd->bhn', q, k_sum).unsqueeze(-1)  # (B, H, N, 1)
         
         output = numerator / (denominator + 1e-6)  # (B, H, N, D)
         

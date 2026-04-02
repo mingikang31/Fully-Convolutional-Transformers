@@ -1,0 +1,15 @@
+datasets
+transformers
+tokenizers
+fsspec<=2025.10.0
+filelock
+tiktoken
+numpy
+matplotlib<3.9
+tqdm
+torch
+torchsummary
+torchvision
+pytorch-ignite
+pytorch-lightning
+positional-encodings
