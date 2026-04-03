@@ -170,7 +170,7 @@ class CUB200SegmentationDataset(torch.utils.data.Dataset):
 
 
 def get_dataset(
-    root="data/CUB_200",
+    root=".data/CUB_200",
     batch_size=64,
     train_transform=train_transform,
     val_transform=val_transform,

@@ -8,7 +8,7 @@ import json
 import wandb
 import cub_utils
 from segmentation_utils import SegmentationTrainer, SegmentationTrainerConfig
-from .fc_segformer import FC_SegformerForSemanticSegmentation, FC_SegformerConfig
+from fc_segformer import FC_SegformerForSemanticSegmentation, FC_SegformerConfig
 
 
 if __name__ == "__main__":
