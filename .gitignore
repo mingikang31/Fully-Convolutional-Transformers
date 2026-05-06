@@ -3,6 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+Issac-Code/.data/
+Issac-Code/wandb/
+Issac-Code/checkpoints/
+
 # C extensions
 *.so
 
